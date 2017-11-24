@@ -43,14 +43,14 @@ public class CamelGeocoderRoute extends RouteBuilder {
 				.responseMessage().code(200).message("Geocoder successful").endResponseMessage()
 				// call the geocoder to lookup details from the provided address
 				.toD("geocoder:address:${header.address}");
-				// ここでパラメータとしてProxy指定が最強
-				//.toD("geocoder:address:${header.address}?proxyHost=133.199.251.110&proxyPort=8080");
+				// ここでパラメータとして指定が最強
+				//.toD("geocoder:address:${header.address}?useSystemProperties=true");
 
 		// with Proxy
 		from("timer://foo?period=5000")
 			.to("https4://api.github.com/search/repositories?q=microservice")
-			// ここでパラメータとしてProxy指定が最強
-			//.to("https://api.github.com/search/repositories?q=microservice&proxyHost=133.199.251.110&proxyPort=8080")
+			// ここでパラメータとして指定が最強
+			//.to("https://api.github.com/search/repositories?q=microservice&useSystemProperties=true")
 			.to("file:{{env:HOMEPATH}}/Desktop/outBox?fileName=github_${date:now:yyyyMMdd_HHmmss}.json");
 
 		// without Proxy
