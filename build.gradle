@@ -1,0 +1,93 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.2.RELEASE'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'findbugs'
+//apply plugin: 'checkstyle'
+
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+sourceCompatibility=1.8
+targetCompatibility=1.8
+
+jar {
+    baseName = 'camel-example-spring-boot-geocoder2'
+    version = '1.0.0'
+}
+
+javadoc {
+    options.charSet = 'UTF-8'
+    include 'org/apache/camel/**'
+    failOnError = false
+}
+
+//checkstyle {
+//    configFile = file('./config/checkstyle/cs_tj-checks.xml')
+//    toolVersion = '7.8'
+//}
+
+findbugs {
+    ignoreFailures = true
+    excludeFilter = file('./config/findbugs/fb_exclude-filter_HighToLow.xml')
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled false
+        html.enabled true
+        html.stylesheet resources.text.fromFile('./config/findbugs/default.xsl')
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter();
+}
+
+dependencies {
+    ext {
+        camelVersion = '2.20.1'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile "org.apache.camel:camel-spring-boot-starter:${camelVersion}"
+    compile "org.apache.camel:camel-swagger-java-starter:${camelVersion}"
+    compile "org.apache.camel:camel-servlet-starter:${camelVersion}"
+    compile "org.apache.camel:camel-jackson-starter:${camelVersion}"
+    compile "org.apache.camel:camel-geocoder-starter:${camelVersion}"
+    compile "org.apache.camel:camel-http4-starter:${camelVersion}"
+
+    compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile "org.apache.camel:camel-test-spring:${camelVersion}"
+
+    runtime 'org.springframework.boot:spring-boot-devtools'
+}
+
+bootRun {
+    jvmArgs = [
+        "-Dfile.encoding=UTF-8",
+        // FIXME 以下は無効
+        //"-Dhttp.proxyHost=133.199.251.110",
+        //"-Dhttp.proxyPort=8080",
+        //"-Dhttp.nonProxyHosts=localhost|10.51.219.43",
+    ]
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "3.5"
+}
